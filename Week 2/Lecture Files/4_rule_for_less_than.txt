@@ -1,0 +1,11 @@
+Syntax:
+	e1 < e2, where e1 and e2 are expressions.
+
+Type-checking:
+	if e1 and e2 are type int
+	then e1 < e2 has type bool.
+
+Evaluation:
+	if e1 evaluates to v1 and e2 evaluates to v2
+	if v1 is less than v2 the whole expression's result is true
+	otherwise, the whole expression's result is false.
