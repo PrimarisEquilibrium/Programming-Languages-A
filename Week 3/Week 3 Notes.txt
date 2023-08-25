@@ -1,0 +1,85 @@
+Conceptual Ways to Build New Types:
+- There are three major compound data types, "Each-of", "One-of", "Self-reference".
+
+Records: Another Approach to “Each-of” Types:
+- Records are another way of representing "Each-of" types, the other being tuples.
+- Record syntax:
+	{f1 = e1, ..., fn = en} where f is a field name and e is an expression.
+	{foo : int, bar : int*bool, baz : bool*int} (Type example)
+
+By Name vs. By Position, Syntactic Sugar, and The Truth About Tuples:
+- (e1, ..., en) is equal to writing {1=e1, ..., n=en}, just syntactic sugar. That is why using #i works, #1 would map to e1.
+
+Datatype Bindings: Our Own “One-of” Types:
+- Datatypes are SMLs way of representing "One-of" types, they consist of the main datatype and its constructors.
+- Datatype syntax:
+	datatype mytype = c1 of <type>
+			| ...
+			| cn of <type> (or blank with just cn)
+- Constructors can also be referred to as "tags" and have two purposes, as a function to create a value of its type and used in case-expressions as a constructor pattern.
+- Datatypes are "One-of" types as they all belong to a single datatype but can only belong to a single constructor.
+
+How ML Does Not Provide Access to Datatype Values:
+- ML does not provide functions (similar to null, hd, tl) to see if datatype constructors are the correct type and extract their values. Rather ML uses case expressions to solve this problem.
+
+How ML Provides Access to Datatype Values: Case Expressions:
+- Case expressions are similar to if-then-else conditions but hold an arbitrary amount of branches, all branches must output the same type.
+- Case expression syntax:
+	case e1 of
+		p1(i1, ..., in) => e2
+              | ...
+	      | pn => en  where e is an expression (e1 is the main case expression), p is a pattern that tries to match to e1, i is any values attached to the pattern.
+- Case expressions are superior to functions for testing variants and extracting pieces as they are better tested, provide more support, and more powerful.
+
+
+Useful Examples of “One-of” Types:
+- One-of types are excellent for fix options and using different data in different situtations. Make sure that one-of types are used in correct situations.
+
+Datatype Bindings and Case Expressions So Far, Precisely:
+- Datatypes are used to carry data and case expressions are used to extract pieces from the data.
+
+Type Synonyms:
+- Type synonyms allow for various types to be referenced as another type.
+
+Lists and Options are Datatypes:
+- Lists and options are SML built-in datatypes, they use special constructs. Lists: [] & e::loe, options: NONE & SOME e.
+
+Polymorphic Datatypes:
+- Polymorphic datatypes are a way of building generic datatypes, meaning they can be used with any type.
+
+Pattern-Matching for Each-Of Types: The Truth About Val-Bindings:
+- Pattern matching can also be used for Each-of types, {f1=v1, ..., fn=vn} matches to {f1=x1, ..., fn=xn} where every xi binds to every vi.
+- It is possible to also pattern-match in val bindings, val pattern-binding = value.
+- It is even possible to pattern-match in the function binding, func (binding), it performs pattern matching on the argument passed to the function and extracts the values to use.
+- In SML there are only one argument functions, they take in a tuple and use pattern matching to extract the pieces. This includes zero argument functions, they just take a unit with type unit predefined.
+
+Digression: Type inference:
+- When using pattern-matching (either case-expressions or val/function bindings) you no longer need to define a specific type. This is because pattern-matching provides the type interpreter with enough information, unlike the #index/record-name syntax which need explicit types.
+
+Digression: Polymorphic Types and Equality Types:
+- Polymorphic types indicate that your program is more general than one with explicit types, however the replacement of polymorpic types must be consistant.
+- Equality types indicate the type of the value you pass must be supported with the equality operator "=".
+
+Nested Patterns:
+- The definitions for patterns are recursive, meaning that they can be nested anywhere normal variables are seen.
+- For constructors with multiple arguments you do not need to explicity bind every value, rather you can bind it to a single variable. E.x. C(x1, ..., xn) => C x where x is C(v1, ..., vn).
+
+Useful Examples of Nested Patterns:
+- Be careful when using the wildcard pattern on its own, the type-checker will assume you have all cases.
+
+Optional: Multiple Cases in a Function Binding:
+- SML provides special syntax for matching against one-of types in function bindings. Syntax:
+	fun f p1 = e1
+	| f p2 = e2
+	...
+	| f pn = en
+
+Exceptions:
+- raise is used to raise (also know as throw) an exception.
+- exception is used to create custom exception bindings. Exceptions are alot like constructors, they all return type exn but by passing values to exceptions using of <type> you can add arguments.
+- handle is used to catch certain exceptions, syntax: e1 handle p => e2.
+
+Tail Recursion and Accumulators:
+- A call stack is a data structure that holds the current functions that are yet to be completed.
+- Using an accumulator lessens the amount of stack frames on the call stack as it makes the recursive calls a tail call. The callee's stack-frame is popped/replace by the caller's as the caller was just going to return the callee's result.
+- Certain functions cannot always be tail-recursive, an example is a function that processes trees.

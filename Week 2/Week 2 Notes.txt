@@ -1,0 +1,51 @@
+ML Expressions and Variable Bindings:
+- ML programs are a sequence of bindings, they first get type-checked and then evaluated.
+- Variable binding syntax:
+	val x = e;
+
+Using use:
+- use "filename.sml"; allows you to import bindings from another file to the current file.
+
+Variables are Immutable:
+- Once bindings are set you cannot mutate that binding, the dynamic environment will always maintain the original binding.
+- Overwriting a variable or "Shadowing" only creates a new environment, any values using the old variable will continue to use the same variable.
+
+Function Bindings:
+- Function binding syntax:
+	fun x0 (x1 : t1, ..., xn : tn) = e
+
+Pairs and Other Tuples:
+- Tuples are a way to store compound data, data that is made up with multiple parts.
+- Tuple syntax:
+	(e1, e2) where e1 and e2 evaluate to some value.
+	(#i tuple) where i is the index (one-based indexing) of an element in the tuple.
+
+Lists:
+- Lists are another way to store compound data, unlike tuples all values must contain the same type.
+- List syntax:
+	[e1, ..., en] where e1 and e2 evaluate to some value.
+	null lst (fn to see if list is empty)
+	hd lst (first elm of list)
+	tl lst (rest of list)
+
+Let Expressions:
+- Allows creation of a new local scope which can be used to create bindings. They are crucial for style and efficency and introduces the possibilites for important programming idioms.
+- Let syntax:
+	let b1 b2 ... bn in e end; where bi is a binding and e is an expression.
+
+Options:
+- Options are useful when you want a list with either 0 or 1 elements, options can either be NONE or SOME n where n is a value.
+- Option syntax:
+	valOf (gets the value n from SOME n if option is type SOME)
+	isSome (produces true if option is type SOME)
+
+Lack of Mutation and Benefits Thereof:
+- Immutability is a large part of functional programming, one of the major advantages is that aliasing issues are non-existant. It doesn't matter what binding points to another because their values can never be changed.
+
+The Pieces of a Programming Language:
+- There are five major pieces needed for defining and learning any programming languages:
+	Syntax: How do you write the various parts of the language?
+	Semantics: What do the various language features mean? For example, how are expressions evaluated?
+	Idioms: What are the common approaches to using the language features to express computations?
+	Libraries: What has already been written for you? How do you do things you could not do without library support (like access files)?
+	Tools: What is available for manipulating programs in the language (compilers, read-eval-print loops, debuggers, ...)
