@@ -66,16 +66,11 @@ val longest_string4 = longest_string_helper (fn (i1, i2) => i1 >= i2);
 
 (* Produces the longest string in the list that is capitalized, "" if no such string exists.
    ASSUME: All strings have atleast 1 character. *)
-fun longest_capitalized (los : string list) : string =
-    foldl (fn (str, acc) => if String.size str > String.size acc andalso
-			       Char.isUpper(String.sub(str, 0)) then str else acc)
-	  ""
-	  los;
+val longest_capitalized : string list -> string = longest_string1 o only_capitals;
 
 
 (* Reverses a string. *)
-fun rev_string (s : string) : string =
-    (implode o rev o explode) s;
+val rev_string : string -> string = implode o rev o explode;
 
 
 (* Produces an option of the first answer recieved. If returns NONE for all elements raise NoAnswer. *)
@@ -130,7 +125,7 @@ fun check_pat (p : pattern) : bool =
 	fun unique_list (los : string list) : bool =
 	    case los of
 		[] => true
-	      | s::los' => not (List.exists (fn x => x = s) los');
+	      | s::los' => not (List.exists (fn x => x = s) los') andalso unique_list(los');
     in
 	(unique_list o pat_vars_to_str) p
     end;
@@ -142,7 +137,7 @@ fun match (v : valu, p : pattern) : (string * valu) list option =
 	(_, Wildcard) => SOME []
       | (_, Variable s) => SOME [(s, v)]
       | (Unit, UnitP) => SOME []
-      | (Const vi, ConstP pi) => if v1 = pi then SOME [] else NONE
+      | (Const vi, ConstP pi) => if vi = pi then SOME [] else NONE
       | (Tuple vs, TupleP ps) => if length vs = length ps
 				 then all_answers match (ListPair.zip(vs, ps))
 				 else NONE

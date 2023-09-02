@@ -28,56 +28,28 @@ fun all_except_option (s : string, los : string list) : string list option =
       | s'::los' => if same_string(s', s)
 		    then SOME los'
 		    else case all_except_option(s, los') of
-			     NONE => SOME [s']
+			     NONE => NONE
 			   | SOME n => SOME (s'::n);
 
 
 (* Produces a list of strings found in the same sublists as the target, excluding the target itself. *)
 fun get_substitutions1 (xs : string list list, s : string) : string list =
-    let
-	fun in_list (los : string list, s : string) : bool =
-	    case los of
-		[] => false
-	      | s'::los' => (s' = s) orelse in_list(los', s);
-    in
-	case xs of
-	    [] => []
-	  | x::xs' => if in_list(x, s) then
-			  let
-			      val x_negate_s = all_except_option(s, x);
-			  in
-			      case x_negate_s of
-				  NONE => get_substitutions1(xs', s)
-				| SOME v => v @ get_substitutions1(xs', s)
-			  end
-		      else
-			  get_substitutions1(xs', s)
-    end;
-
+    case xs of
+	[] => []
+      | x::xs' => case all_except_option(s, x) of
+			  NONE => get_substitutions1(xs', s)
+			| SOME v => v @ get_substitutions1(xs', s)
+							  
 
 (* Tail recursive implimentation of get_substitutions1. *)
 fun get_substitutions2 (xs : string list list, s : string) : string list =
     let
 	fun get_substitutions2_acc (xs : string list list, s : string, rsf : string list) : string list =
-	    let
-		fun in_list (los : string list, s : string) : bool =
-		    case los of
-			[] => false
-		      | s'::los' => (s' = s) orelse in_list(los', s);
-	    in
-		case xs of
-		    [] => rsf
-		  | x::xs' => if in_list(x, s) then
-				  let
-				      val x_negate_s = all_except_option(s, x);
-				  in
-				      case x_negate_s of
-					  NONE => get_substitutions2_acc(xs', s, rsf)
-					| SOME v => get_substitutions2_acc(xs', s, rsf @ v)
-				  end
-			      else
-				 get_substitutions2_acc(xs', s, rsf)
-	    end;
+	    case xs of
+		[] => rsf
+	      | x::xs' => case all_except_option(s, x) of
+			      NONE => get_substitutions2_acc(xs', s, rsf)
+			    | SOME v => get_substitutions2_acc(xs', s, rsf @ v)
     in
 	get_substitutions2_acc(xs, s, [])
     end;

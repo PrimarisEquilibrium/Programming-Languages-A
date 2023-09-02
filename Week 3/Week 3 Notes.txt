@@ -31,7 +31,6 @@ How ML Provides Access to Datatype Values: Case Expressions:
 	      | pn => en  where e is an expression (e1 is the main case expression), p is a pattern that tries to match to e1, i is any values attached to the pattern.
 - Case expressions are superior to functions for testing variants and extracting pieces as they are better tested, provide more support, and more powerful.
 
-
 Useful Examples of “One-of” Types:
 - One-of types are excellent for fix options and using different data in different situtations. Make sure that one-of types are used in correct situations.
 

@@ -1,0 +1,76 @@
+Introduction and Some Terms
+- First-class functions: functions that can be computed, passed, stored, etc.
+- Function closures: functions that use variables defined outside of them.
+- Higher-ordered functions: functions that consume other functions.
+
+Taking Functions as Arguments
+- By allowing functions to be passed as arguments you can abstract parts of multiple computations and reuse code.
+
+Polymorphic Types and Functions as Arguments:
+- Parametric polymorphism/generic types is a way of creating/using functions that take arguments of any type.
+
+Anonymous functions:
+- Anonymous functions are functions without an identifier, they are very useful when performing one time operations or passing as a fc function to a ho function.
+- Anonymous function syntax:
+	fn (a1, ..., an) => e, where a is an argument and e is an expression.
+        (by binding it to a val you can give it an identifier)
+- Val function bindings do not support recursion.
+
+Unnecessary Function Wrapping:
+- If you see fn x => f x, just write f. Skip the function wrapping.
+
+Maps and filters:
+- Map and filter are both important idiom in many languages, they both make use of using functions as arguments.
+- Map performs a function action on every element of the list. Filter uses a boolean returning function to determine what elements stay in the list.
+
+Returning functions:
+- Functions can also returns functions.
+
+Not just for numbers and lists:
+- Higher-ordered functions also are useful for creating abstract functions for any data type.
+
+Lexical scope:
+- Lexical scope is evaluated based on where bindings are defined, rather than dynamic scope where bindings are evaluated during runtime.
+
+Environments and Closures:
+- A function has two parts, the actual code and its environment. Both of these together are a function closure. A closure stores all the environment bindings needed for it to be executed, so the closure overall is "closed" it has everything it needs to produce a function result given a function argument.
+
+Why Lexical Scope:
+- Lexical scope is used because it leads to results in our program we can better predict.
+- Sometimes dynamic scope is used, such as in exceptions.
+
+Passing Closures to Iterators Like Filter:
+- A useful use for closures is passing down closure environment data such as arguments from a function to abstract operators. These abstract operators can look up these bindings higher up in the scope.
+e.x. fun allGreaterThan (xs,n) = filter (fn x => x > n, xs)
+- Here fn x => x > n, within the filter function looks up n in the environment and finds a binding n (arg to allGreaterThan). Without closures the filter wouldn't be able to access n as the environment won't be able to access n.
+
+Fold and More Closure Examples:
+- Fold is useful when taking many of something and reducing them to one value. You can create abstract fold functions for many different data structures.
+- Once again closures are extremely useful, it allows for "private fields" which only exists within the closure environment. This makes the data always remain relevant and tailored to what the developer expects.
+
+Another Closure Idiom: Combining Functions:
+- Function composition is an important programming idiom, if a problem has multiple but distinct operations you should use function composition.
+- syntax: (f1 o ... o fn) args
+fn-1 computes the result fron fn and so on.
+
+Another Closure Idiom: Currying and Partial Application:
+- Currying is used to mimic multi-argument functions, it involves a function take the first argument and another function taking the second function.
+e.x. val sorted3 = fn x => fn y => fn z => z >= y andalso y >= x
+or simplified to val sorted3 x y z = z >= y andalso y >= x and called with sorted 3 4 5.
+- Partial application can be used by calling a curried function with fewer arguments that expected, by doing this you will get back a functin.
+
+The Value Restriction:
+- A value restriction error may occur when creating a function with polymorphism and mutable references. Explained in the next week.
+
+Mutation via ML References:
+- Mutable is acceptable in some circumstances such as storing some program state.
+- Syntax: ref e (makes reference), !r (gets contents), r := e (updates reference.)
+
+Another Closure Idiom: Callbacks:
+- Callbacks are another common idiom that are useful when wanting to await for events and notify clients when an event occurs and update accordingly.
+- An example of a callback is a onKeyEvent which "registers" (takes in a key) into the callback list and upon some event such as onEvent (recieves a key and calls all callback functions with that key). For this to be possible we would need mutable state to store the list of onKeyEvents.
+- Closures are very powerful in callbacks, they allow for these callback functions to store extra internal data in their own environment which the callee of the function wouldn't need to deal with. An example is a function that prints to the console if a certain key is pressed using the onKeyEvent. The onEvent function does not need to worry about that argument.
+
+Optional: Another Closure Idiom: Abstract Data Types:
+- ML's representation of abstract data types share similarites to OOP's implimentation, this is very clear in terms of using functions to access and manipulate internal attributes.
+- ML uses a record of closures to accomplish this. A broad explaination is that a datatype is used to create a one-of type containing a constructor which is of type record with a list of functions that the datatype contains. When you create an instance of the ADT you provide an internal value to store the "state" of the datatype and provide the functions.

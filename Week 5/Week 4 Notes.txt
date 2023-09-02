@@ -1,0 +1,71 @@
+What is Type Inference?:
+- Statically typed languages like ML determine types at compile time while dynamically typed languages like Racket and Python determine them at runtime.
+- ML type inference is connected to parametric polymorphism where types can be generic.
+
+Overview of ML Type Inference:
+1. Detemines bindings types in order using earlier bindings to infer later ones.
+2. Analyzes bindings to gather information about types.
+3. Uses polymorphic type variables for types that are unrestrained.
+4. Enforces the value restriction.
+- Type system ensures that programs that type check never run.
+
+Optional: The Value Restriction:
+- The ML type system can be unsound indicating it could run with values of the wrong type.
+- The problem occurs when trying to assign values of different types to mutable references.
+- ML employs the value restriction which dictates that a variable in a val binding can only have a polymorphic type only if the expression in the val binding is a value or variable.
+
+Mutual Recursion:
+- ML supports mutual recursion in fun and datatype bindings, just replace "fun"/"datatype" with and.
+- It doesn't matter the order of definitions in mutual recursion as everything gets type checked together.
+
+Modules for Namespace Management:
+- Modules allow you to store bindings in a namespace.
+- Syntax: structure Name = struct bindings end. You can access bindings in the module using Name.b where b is a binding.
+- Use open Module; to get all the bindings into the global scope.
+
+Signatures:
+- Explicit module signatures provide an interface that code outside the module must obey.
+- Syntax: signature Name = sig signatures (val binding : type) end.
+
+Hiding Things:
+- Seperating an interface and implimentation is the best approach to build robust, correct, and reusable code.
+- Another way to hide implimentation from the client is by defining functions locally inside other functions, the benefit is that by updating the functions code we would know for certain that it wouldn't effect any other code and the other way around which wouldn't break how other functions work.
+- To hide functions at the top module level while other functions can still call it is by making it in private, in ML to do this just don't include it in the modules signature.
+
+Introducing our extended example:
+- Invariants are implementation rules within functions, they are properties that all functions assume to be true and guarantee is keep true. Breaking an invariant may cause other functions later on to perform in unexpected ways.
+
+Signatures for Our Example:
+- The goal of a signature with a module with an invariant is to make it so it is impossible for clients to violate its invariants.
+- Properties are rules for libraries (modules) that you want the clients to obey by, but that it of itself isn't enough to keep modules functional.
+- One issue that may arise is that clients can directly access constructors from datatypes, the solution is to make it an abstract type. E.x. type rational rather than a datatype. By doing this we define a type to the module but without revealing the implementation of the type.
+- "abstract" means hiding the internal details or implementation details from the client and rather provide a well-defined and controlled interface for them to use.
+
+A Cute Twist: Expose the Whole function:
+- If you want to expose a certain constructor that is still allowed to be used without breaking any invariants is doing the following. val Constructor : type -> datatype. This means it takes in a type (for a Whole num for instance: an int) and it produces a datatype (a rational number).
+
+Rules for Signature Matching:
+- If a structure does not match a signature assigned to it, the module will not type-check.
+A structure Name matches a signature BLAH if:
+- For all val-bindings in BLAH, Name must have a binding with that type or a more general one.
+- For every non-abstract type-binding in BLAH, Name must have the same type binding.
+- For every abstract type-binding in BLAH, Name must have some binding that creates that type.
+Note: Name can have additional bindings that are not in the signature.
+
+Equivalent Implementations:
+- An equivalent implementation means that two implementations behave the exact same way, just that their direct implementation (code) is different.
+- Knowing how to create equivalent implementations are essential when improving/changing a library to not break the clients.
+- You can even apply equivalent implementation to types.
+
+Different modules define different types:
+- You cannot use bindings from one structure to another even if they have the same name and exactly the same type definition. This is because the type is different as they come from their module, e.x. Module.Whole != OtherModule.Whole.
+
+Motivating and Defining Equivalence:
+- A function f is equal to function g if they both produce the same answer and have the same side-effects no matter where they are called in the program with any arguments.
+- Equivalence does not require the same running time, the same use of internal data structures, the same helper functions, etc. All these things are considered "unobservable", i.e., implementation details that do not affect equivalence.
+
+Another Benefit of Side-Effect-Free Programming:
+- The best way to make two functions have the same side effects is to have no side effects at all. Functional languages (pure) excel at this as they cannot perform mutation. The benefit to this is that it is easier to accomplish equivalence.
+
+Revisiting our Definition of Equivalence:
+- There are a variation of ways computer scientist define equivalence, some people force on asymptotic complexity so they can decide on what version of the same thing is "better" (faster run time).
